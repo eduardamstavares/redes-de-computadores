@@ -52,7 +52,7 @@ def ler_cabecalho(mensagem: bytes): #mensagem recebida em bytes
         raise ValueError("Mensagem com tamanho inferior aos 7 bytes minimos.") #interrompe execucao da funcao 
     
     tipo, num_msg, num_conexao = struct.unpack("<BIH", mensagem[:7]) #pega os primeiros 7 bytes e converte para inteiros no formato especificado
-    payload = mensagem[7:] #coloca os proximos 7 bytes da mensagem no payload, separando do cabecalho
+    payload = mensagem[7:] #coloca os proximos bytes após o setimo da mensagem no payload, separando do cabecalho
     return tipo, num_msg, num_conexao, payload 
 
 #funcao responsavel por iniciar a conexao do cliente e servidor
@@ -65,7 +65,7 @@ def iniciar_conexao(meu_socket):
     byte_inicial = random.randint(1, 1000000)
     
     # Monta e envia a mensagem CONN_REQ (id_conexao ainda é 0)
-    mensagem_envio = criar_cabecalho(CONN_REQ, byte_inicial, id_conexao=0) #CONN_REQ é o pedido de conexao
+    mensagem_envio = criar_cabecalho(CONN_REQ, byte_inicial, 0) #CONN_REQ é o pedido de conexao
     meu_socket.sendto(mensagem_envio, (IP_SERVIDOR, PORTA_SERVIDOR)) #transmite mensagem via UDP para o IP e porta do servidor
     
     # Aguarda a resposta por no máximo 5 segundos
