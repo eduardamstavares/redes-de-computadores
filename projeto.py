@@ -146,4 +146,34 @@ def fechar_conexao(meu_socket, id_conexao, byte_esperado):
     mensagem_fin = criar_cabecalho(CONN_FIN, byte_esperado, id_conexao)
     meu_socket.sendto(mensagem_fin, (IP_SERVIDOR, PORTA_SERVIDOR))
     print("-> Conexão encerrada.")
+
+def main():
+    # Cria o socket UDP
+    meu_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
+    # 1. Faz o Handshake inicial
+    byte_esperado, id_conexao, menu_texto = iniciar_conexao(meu_socket)
+    
+    # 2. Loop principal do aplicativo
+    while True:
+        print("\n" + menu_texto)
+        opcao = input("Digite o número da música (1 a 4) ou 0 para sair: ")
+        
+        if not opcao.isdigit():
+            print("Por favor, digite um número válido!")
+            continue
+            
+        opcao = int(opcao)
+        
+        if opcao == 0:
+            fechar_conexao(meu_socket, id_conexao, byte_esperado)
+            break
+        elif 1 <= opcao <= 4:
+            menu_texto, byte_esperado = baixar_musica(meu_socket, id_conexao, byte_esperado, opcao)
+        else:
+            print("Opção inválida! Escolha entre 0 e 4.")
+
+    meu_socket.close()
+
+if __name__ == "__main__":
+    main()
